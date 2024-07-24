@@ -1,3 +1,6 @@
 venv
 __pycache__
 store/store/settings.py
+
+store/db.sqlite3
+image_of_products
