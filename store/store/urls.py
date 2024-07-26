@@ -6,9 +6,12 @@ from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from goods.views import ProductViewSet
+from users.views import UserViewset
 
 router = SimpleRouter()
 router.register(r'products', ProductViewSet)
+router.register(r'users', UserViewset)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
