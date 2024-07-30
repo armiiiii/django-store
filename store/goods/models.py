@@ -25,3 +25,26 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.category} - {self.title}"
     
+#     class Meta:
+#         abstract = True
+    
+
+# class Car(Product):
+#     class CarType(models.TextChoices): # Only 5 categories are available
+#         A = 'A', 'A'
+#         B = 'B', 'B'
+#         C = 'C', 'C'
+#         D = 'D','D'
+#         M = 'M', 'M'
+#     registry_sign = models.CharField(max_length=9, null=False)
+#     type_of_transport = models.CharField(choices=CarType, max_length=1, null=False)
+#     transport_model = models.CharField(null=False)
+#     year = models.PositiveSmallIntegerField(null=False)
+#     weight = models.PositiveSmallIntegerField(null=False)
+#     # And many other characteristics
+
+
+# class Apartament(Product):
+#     class ApartamentType(models.TextChoices):
+
+#     type_of_apartament = models.CharField("")
