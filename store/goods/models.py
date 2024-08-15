@@ -12,14 +12,33 @@ class Category(models.Model):
         ordering = ['title']
 
 
+class ProductImage(models.Model):
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="images_of_products", blank=False, null=False)
+
+
+class ProductManager(models.Manager): 
+    """Product manager class
+    
+    Helps us to create product and images of product almost at the same time.
+    """
+    
+    def create(self, owner, title, price, category, description, images):
+        product = Product(owner=owner, title=title, price=price, category=category, description=description)
+        product.save()
+        for image in images:
+            ProductImage(image=image, product=product).save()
+        return product
+
+
 class Product(models.Model):
+    objects = ProductManager()
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, blank=False)
     title = models.CharField("title of the product", max_length=100, null=False, blank=False)
     price = models.FloatField("price of the product", blank=False, null=False)
     description = models.TextField("description of the product", blank=False, null=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="category of the product")
     rating = models.FloatField("rating of the product", default=0.0, blank=False)
-    image = models.ImageField(upload_to="image_of_products", blank=False, null=False)
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
