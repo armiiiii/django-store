@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.conf import settings
 
@@ -13,6 +15,8 @@ class Category(models.Model):
 
 
 class ProductImage(models.Model):
+    # TODO: Try to turn off direct access to the manager and other database related methods
+    # TODO: Rename files when saving
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images_of_products", blank=False, null=False)
 
@@ -45,6 +49,12 @@ class Product(models.Model):
     @property
     def images(self):
         return ProductImage.objects.filter(product=self)
+
+    def delete(self, **kwargs):
+        for image in self.images:
+            os.remove(image.image.path)
+            image.delete()
+        return super().delete(**kwargs)
 
     def __str__(self):
         return f"{self.category} - {self.title}"
