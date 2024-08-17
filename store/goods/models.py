@@ -23,11 +23,12 @@ class ProductManager(models.Manager):
     Helps us to create product and images of product almost at the same time.
     """
     
-    def create(self, owner, title, price, category, description, images):
-        product = Product(owner=owner, title=title, price=price, category=category, description=description)
+    def create(self, **kwargs):
+        images = kwargs.pop('images')
+        product = Product(**kwargs)
         product.save()
         for image in images:
-            ProductImage(image=image, product=product).save()
+            ProductImage(image=image['image'], product=product).save()
         return product
 
 
@@ -40,6 +41,10 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="category of the product")
     rating = models.FloatField("rating of the product", default=0.0, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def images(self):
+        return ProductImage.objects.filter(product=self)
 
     def __str__(self):
         return f"{self.category} - {self.title}"
