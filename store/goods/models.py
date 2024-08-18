@@ -1,7 +1,10 @@
 import os
 
+from typing import List
+
 from django.db import models
 from django.conf import settings
+from django.core.files import File
 
 
 class Category(models.Model):
@@ -14,12 +17,17 @@ class Category(models.Model):
         ordering = ['title']
 
 
-class ProductImage(models.Model):
-    # TODO: Try to turn off direct access to the manager and other database related methods
+class ProductImage(models.Model): 
+    # I've decided that all image management and product management 
+    # will be separate in different forms at the front end.
     # TODO: Rename files when saving
     # TODO: Resize images when saving
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
     image = models.ImageField(blank=False, null=False)
+
+    def delete(self, **kwargs): 
+        os.remove(self.image.path)
+        return super().delete(**kwargs)
 
 
 class ProductManager(models.Manager): 
@@ -51,9 +59,15 @@ class Product(models.Model):
     def images(self):
         return ProductImage.objects.filter(product=self)
 
-    def delete(self, **kwargs):
+    @images.setter
+    def images(self, images: List[File]):
+        for image in images:
+            ProductImage(image=image, product=self).save()
+
+    def delete(self, **kwargs): 
+        # For some reasone it doesn't delete images from the settings.MEDIA_ROOT via CASCADE property
+        # So I'll just call it explicitly.  
         for image in self.images:
-            os.remove(image.image.path) # Remove image from local storage
             image.delete()
         return super().delete(**kwargs)
 
