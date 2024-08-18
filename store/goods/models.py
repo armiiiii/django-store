@@ -17,8 +17,9 @@ class Category(models.Model):
 class ProductImage(models.Model):
     # TODO: Try to turn off direct access to the manager and other database related methods
     # TODO: Rename files when saving
+    # TODO: Resize images when saving
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="images_of_products", blank=False, null=False)
+    image = models.ImageField(blank=False, null=False)
 
 
 class ProductManager(models.Manager): 
@@ -52,7 +53,7 @@ class Product(models.Model):
 
     def delete(self, **kwargs):
         for image in self.images:
-            os.remove(image.image.path)
+            os.remove(image.image.path) # Remove image from local storage
             image.delete()
         return super().delete(**kwargs)
 
