@@ -19,14 +19,16 @@ class Category(models.Model):
 
 class ProductImage(models.Model): 
     # I've decided that all image management and product management 
-    # will be separate in different forms at the front end.
+    # will be separate in different forms (that we submit) at the front end.
     # TODO: Rename files when saving
     # TODO: Resize images when saving
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
     image = models.ImageField(blank=False, null=False)
 
-    def delete(self, **kwargs): 
-        os.remove(self.image.path)
+    def delete(self, **kwargs):
+        try:
+            os.remove(self.image.path)
+        except FileNotFoundError: ...
         return super().delete(**kwargs)
 
 
@@ -60,7 +62,7 @@ class Product(models.Model):
         return ProductImage.objects.filter(product=self)
 
     @images.setter
-    def images(self, images: List[File]):
+    def images(self, images: List[File]): # Set for testing in the shell
         for image in images:
             ProductImage(image=image, product=self).save()
 
