@@ -6,6 +6,8 @@ from django.db import models
 from django.conf import settings
 from django.core.files import File
 
+from users.models import Feedback
+
 
 class Category(models.Model):
     title = models.CharField(verbose_name="title of the category", max_length=100)
@@ -60,6 +62,10 @@ class Product(models.Model):
     @property
     def images(self):
         return ProductImage.objects.filter(product=self)
+
+    @property
+    def feedbacks(self):
+        return Feedback.objects.filter(product=self)
 
     @images.setter
     def images(self, images: List[File]): # Set for testing in the shell
